@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/drag0ns3c/httpg/handlers"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -36,12 +35,8 @@ func main() {
 	r := mux.NewRouter()
 
 	// sys info
-	templatesBox := packr.New("templates", "./templates")
-	r.Handle("/__info__", handlers.SystemInfoHandler(templatesBox))
-
-	// static
-	staticBox := packr.New("static", "./static")
-	r.Handle("/__info__/static/{asset}", handlers.StaticHandler(staticBox))
+	//templatesBox := packr.New("templates", "./templates")
+	r.Handle("/__info__", handlers.SystemInfoHandler())
 
 	// file server
 	absPath, err := filepath.Abs(dirPath)
