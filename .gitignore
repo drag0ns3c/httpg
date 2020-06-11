@@ -87,3 +87,4 @@ Temporary Items
 
 .idea
 *.iml
+*-packr.go

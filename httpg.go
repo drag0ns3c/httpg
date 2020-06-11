@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -16,7 +16,7 @@ import (
 
 func StaticHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	box := packr.NewBox("./static")
+	box := packr.New("static", "./static")
 	asset, err := box.FindString(vars["asset"])
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -32,7 +32,7 @@ type SystemInfo struct {
 }
 
 func SystemInfoHandler(w http.ResponseWriter, r *http.Request) {
-	box := packr.NewBox("./templates")
+	box := packr.New("templates", "./templates")
 	index, err := box.FindString("index.html")
 
 	if err != nil {
