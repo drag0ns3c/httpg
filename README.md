@@ -13,6 +13,8 @@ The following command will launch the file server listening on `0.0.0.0:9000` an
 ./httpg -port 9000 -host 0.0.0.0 -dirPath .
 ```
 
+You can also find info on the host machine by visiting `/__info__`.
+
 ## Options
 
 | Option | Default | Description |

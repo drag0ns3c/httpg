@@ -1,5 +1,5 @@
 bin := httpg
-version := $(shell git rev-parse --abbrev-ref HEAD)
+version ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 .PHONY: build
 build: clean
