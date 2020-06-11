@@ -15,16 +15,22 @@ import (
 )
 
 func main() {
-	var wait time.Duration
 	var port string
 	var host string
 	var dirPath string
+	var help bool
 
+	flag.BoolVar(&help, "help", false, "print cli help text")
 	flag.StringVar(&dirPath, "dirPath", ".", "the directory to serve")
 	flag.StringVar(&port, "port", "8080", "the port to listen on")
 	flag.StringVar(&host, "host", "0.0.0.0", "the IP to listen on")
-	flag.DurationVar(&wait, "graceful-timeout", time.Second * 15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
+
+	if help {
+		fmt.Println("Usage: httpg [options]\n")
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 
 	r := mux.NewRouter()
 
@@ -41,11 +47,10 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", host, port),
-		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
-		Handler: r, // Pass our instance of gorilla/mux in.
+		Handler:      r,
 	}
 
 	// Run our server in a goroutine so that it doesn't block.
@@ -64,7 +69,7 @@ func main() {
 	<-c
 
 	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), wait)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
