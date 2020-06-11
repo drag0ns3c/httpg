@@ -12,3 +12,12 @@ The following command will launch the file server listening on `0.0.0.0:9000` an
 ```bash
 ./httpg -port 9000 -host 0.0.0.0 -dirPath .
 ```
+
+## Options
+
+| Option | Default | Description |
+| ------ | ------- | ----------- |
+| `dirPath` | `.` | The path to serve files from |
+| `host` | `0.0.0.0` | The host address to listen on |
+| `port` | `8080` | The port number to listen on |
+| `help` | | Display the help text

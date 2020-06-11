@@ -1,14 +1,18 @@
 package sys
 
 import (
+	"fmt"
 	"net"
 	"os"
+	"runtime"
+	"strings"
 )
 
 type Info struct {
-	OS          string
-	Hostname    string
-	IPAddresses map[string][]string
+	OS              string              `json:"operating_system"`
+	Hostname        string              `json:"hosting"`
+	NetworkAdapters map[string][]string `json:"network"`
+	EnvVars         map[string]string   `json:"environment_variables"`
 }
 
 func getIPAddresses() (out map[string][]string) {
@@ -41,8 +45,16 @@ func getIPAddresses() (out map[string][]string) {
 
 		out[i.Name] = ips
 	}
-
 	return
+}
+
+func getEnvVars() map[string]string {
+	out := make(map[string]string)
+	for _, e := range os.Environ() {
+		v := strings.Split(e, "=")
+		out[v[0]] = v[1]
+	}
+	return out
 }
 
 func New() *Info {
@@ -52,11 +64,10 @@ func New() *Info {
 		hostname = "unknown"
 	}
 
-	// determine ip addresses
-
 	return &Info{
-		OS:          "mac",
-		Hostname:    hostname,
-		IPAddresses: getIPAddresses(),
+		OS:              fmt.Sprintf("%s-%s", runtime.GOOS, runtime.GOARCH),
+		EnvVars:         getEnvVars(),
+		Hostname:        hostname,
+		NetworkAdapters: getIPAddresses(),
 	}
 }

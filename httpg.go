@@ -36,7 +36,7 @@ func main() {
 
 	// sys info
 	//templatesBox := packr.New("templates", "./templates")
-	r.Handle("/__info__", handlers.SystemInfoHandler())
+	r.HandleFunc("/__info__", handlers.SystemInfoHandler)
 
 	// file server
 	absPath, err := filepath.Abs(dirPath)
