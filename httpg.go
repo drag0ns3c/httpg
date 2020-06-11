@@ -36,11 +36,11 @@ func main() {
 
 	// sys info
 	templatesBox := packr.New("templates", "./templates")
-	r.Handle("/info", handlers.SystemInfoHandler(templatesBox))
+	r.Handle("/__info__", handlers.SystemInfoHandler(templatesBox))
 
 	// static
 	staticBox := packr.New("static", "./static")
-	r.Handle("/static/{asset}", handlers.StaticHandler(staticBox))
+	r.Handle("/__info__/static/{asset}", handlers.StaticHandler(staticBox))
 
 	// file server
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dirPath))))
