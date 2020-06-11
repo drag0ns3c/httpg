@@ -18,7 +18,7 @@ func SystemInfoHandler(box *packr.Box) http.Handler {
 
 		tmpl := template.New("")
 		tmpl.Parse(index)
-		err = tmpl.Execute(w, &sys.Info{OS: "mac"})
+		err = tmpl.Execute(w, sys.New())
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

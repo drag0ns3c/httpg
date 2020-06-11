@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 )
 
@@ -43,10 +44,19 @@ func main() {
 	r.Handle("/__info__/static/{asset}", handlers.StaticHandler(staticBox))
 
 	// file server
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dirPath))))
+	absPath, err := filepath.Abs(dirPath)
+	if err != nil {
+		log.Printf("failed to determine absolute path of dirPath: %s", dirPath)
+		os.Exit(1)
+	}
+
+	fileHandler := handlers.CacheControl("no-store", http.FileServer(http.Dir(absPath)))
+	r.PathPrefix("/").Handler(fileHandler)
+
+	bindAddr := fmt.Sprintf("%s:%s", host, port)
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf("%s:%s", host, port),
+		Addr:         bindAddr,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
@@ -55,6 +65,8 @@ func main() {
 
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
+		log.Printf("httpg listening on %s", bindAddr)
+		log.Printf("serving the contents of directory %s", absPath)
 		if err := srv.ListenAndServe(); err != nil {
 			log.Println(err)
 		}

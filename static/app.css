@@ -2,10 +2,6 @@
 	font-family: Arial, sans-serif;
 }
 
-html {
-	background: red;
-}
-
 #main {
 	max-width: 960px;
 	margin: 0 auto;

@@ -13,14 +13,29 @@
 
 <div class="pure-g">
 
-	<table class="pure-table pure-table-bordered">
-		<tbody>
-		<tr>
-			<td>OS</td>
-			<td>{{.OS}}</td>
-		</tr>
-		</tbody>
-	</table>
+	<div class="pure-u-1">
+		<table class="pure-table pure-table-bordered">
+			<tbody>
+			<tr>
+				<td>OS</td>
+				<td>{{.OS}}</td>
+			</tr>
+			<tr>
+				<td>Hostname</td>
+				<td>{{.Hostname}}</td>
+			</tr>
+			<tr>
+				<td>IP Addresses</td>
+				<td>
+					{{ range $key, $interface := .IPAddresses}}
+						<p><strong>{{$key}}</strong> - {{ range $index, $ip := $interface}}{{$ip}}, {{ end }}</p>
+					{{ end }}
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
 </div>
 
 </body>
