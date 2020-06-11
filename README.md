@@ -6,6 +6,10 @@ It is distributed as a standalone binary with no dependencies and can be run on 
 
 As a bonus, it will render a status page that will output details of the machine.
 
+## Installation
+
+Head over to the [releases page](https://github.com/drag0ns3c/httpg/releases) to download the binary for your platform.
+
 ## Usage
 
 The following command will launch the file server listening on `0.0.0.0:9000` and will serve the directory the command is run from.
