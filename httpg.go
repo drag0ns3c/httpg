@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/drag0ns3c/httpg/handlers"
 	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/mux"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -14,55 +14,30 @@ import (
 	"time"
 )
 
-func StaticHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	box := packr.New("static", "./static")
-	asset, err := box.FindString(vars["asset"])
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(asset))
-}
-
-type SystemInfo struct {
-	OS string
-}
-
-func SystemInfoHandler(w http.ResponseWriter, r *http.Request) {
-	box := packr.New("templates", "./templates")
-	index, err := box.FindString("index.html")
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	tmpl := template.New("")
-	tmpl.Parse(index)
-	err = tmpl.Execute(w, &SystemInfo{OS: "mac"})
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-}
-
 func main() {
 	var wait time.Duration
 	var port string
 	var host string
+	var dirPath string
 
+	flag.StringVar(&dirPath, "dirPath", ".", "the directory to serve")
 	flag.StringVar(&port, "port", "8080", "the port to listen on")
 	flag.StringVar(&host, "host", "0.0.0.0", "the IP to listen on")
 	flag.DurationVar(&wait, "graceful-timeout", time.Second * 15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", SystemInfoHandler)
-	r.HandleFunc("/static/{asset}", StaticHandler)
+
+	// sys info
+	templatesBox := packr.New("templates", "./templates")
+	r.Handle("/info", handlers.SystemInfoHandler(templatesBox))
+
+	// static
+	staticBox := packr.New("static", "./static")
+	r.Handle("/static/{asset}", handlers.StaticHandler(staticBox))
+
+	// file server
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dirPath))))
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", host, port),
